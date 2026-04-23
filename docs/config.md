@@ -1,10 +1,13 @@
 <!-- AUTO-GENERATED FILE! Do not edit this directly -->
-<!-- File auto-generated on Thu Jul 28 18:11:22 CEST 2022. See docs/config/config.tpl.md -->
+<!-- File auto-generated on Wed Apr 22 23:25:58 CEST 2026. See authme-tools/src/test/java/tools/docs/config/config.tpl.md -->
 
 ## AuthMe Configuration
 The first time you run AuthMe it will create a config.yml file in the plugins/AuthMe folder,
 with which you can configure various settings. The following is the initial contents of
 the generated config.yml file.
+
+This configuration is generated from the shared `authme-core` module. It applies to the
+current Spigot Legacy, Spigot 1.21, and Paper 1.21 builds unless a setting comment says otherwise.
 
 ```yml
 DataSource:
@@ -120,14 +123,24 @@ settings:
     # Message language, available languages:
     # https://github.com/AuthMe/AuthMeReloaded/blob/master/docs/translations.md
     messagesLanguage: en
+    # When enabled, messages are sent to each player in their client language,
+    # falling back to messagesLanguage if their locale is unavailable.
+    # Disable this if you want all players to receive messages in the same language.
+    perPlayerLocale: true
     # Forces authme to hook into Vault instead of a specific permission handler system.
     forceVaultHook: false
     # Log level: INFO, FINE, DEBUG. Use INFO for general messages,
     # FINE for some additional detailed ones (like password failed),
     # and DEBUG for debugging
     logLevel: FINE
-    # By default we schedule async tasks when talking to the database. If you want
-    # typical communication with the database to happen synchronously, set this to false
+    # Whether to run authentication work (password hashing, database queries) on async threads.
+    # When true (strongly recommended), all CPU-intensive and I/O-bound operations — including
+    # password hashing and database access — are offloaded from the main server thread, keeping
+    # the server responsive during login and registration.
+    # Setting this to false forces all of that work onto the main thread, which will cause
+    # noticeable lag spikes on every login or registration attempt, especially with slow
+    # algorithms (Argon2, BCrypt) or a remote database. Only set this to false if you have
+    # a specific technical reason — it is not recommended under any normal circumstances.
     useAsyncTasks: true
     # The name of the server, used in some placeholders.
     serverName: Your Minecraft Server
@@ -198,9 +211,12 @@ settings:
         teleportUnAuthedToSpawn: false
         # Can unregistered players walk around?
         allowMovement: false
-        # After how many seconds should players who fail to login or register
-        # be kicked? Set to 0 to disable.
-        timeout: 30
+        # After how many seconds should players who fail to login be kicked?
+        # Set to 0 to disable.
+        loginTimeout: 30
+        # After how many seconds should players who fail to register be kicked?
+        # Set to 0 to disable.
+        registerTimeout: 30
         # Regex pattern of allowed characters in the player name.
         allowedNicknameCharacters: '[a-zA-Z0-9_]*'
         # How far can unregistered players walk?
@@ -251,7 +267,7 @@ settings:
         # Maximum length of password
         passwordMaxLength: 30
         # Possible values: SHA256, BCRYPT, BCRYPT2Y, PBKDF2, SALTEDSHA512,
-        # MYBB, IPB3, PHPBB, PHPFUSION, SMF, XENFORO, XAUTH, JOOMLA, WBB3, WBB4, MD5VB,
+        # MYBB, IPB3, PHPBB, PHPFUSION, SMF, XENFORO, JOOMLA, WBB3, WBB4, MD5VB,
         # PBKDF2DJANGO, WORDPRESS, ROYALAUTH, ARGON2, CUSTOM (for developers only). See full list at
         # https://github.com/AuthMe/AuthMeReloaded/blob/master/docs/hash_algorithms.md
         # If you use ARGON2, check that you have the argon2 c library on your system
@@ -304,6 +320,10 @@ settings:
         forceKickAfterRegister: false
         # Does AuthMe need to enforce a /login after a successful registration?
         forceLoginAfterRegister: false
+        # Show a graphical dialog UI for login/register instead of chat messages.
+        # Requires Minecraft 1.21.6+ on Spigot, or 1.21.11+ on Paper.
+        # On older server versions, this option is automatically ignored.
+        useDialogUi: true
     # Enable to display the welcome message (welcome.txt) after a login
     # You can use colors in this welcome.txt + some replaced strings:
     # {PLAYER}: player name, {ONLINE}: display number of online players,
@@ -355,9 +375,15 @@ GroupOptions:
 Email:
     # Email SMTP server host
     mailSMTP: smtp.gmail.com
-    # Email SMTP server port
+    # Email SMTP server port. The port determines the encryption mode:
+    #   25  -> plain SMTP; optional STARTTLS via 'useTls' (see below)
+    #   465 -> implicit SSL/TLS (SMTPS); 'useTls' is ignored
+    #   587 -> STARTTLS required (submission); 'useTls' is ignored
+    #   other -> STARTTLS required; 'useTls' is ignored
     mailPort: 465
-    # Only affects port 25: enable TLS/STARTTLS?
+    # Only applies to port 25: enable STARTTLS on the plain SMTP connection?
+    # Has no effect when using port 465 (SSL) or 587 (STARTTLS), which enforce
+    # their own encryption and cannot be overridden by this setting.
     useTls: true
     # Email account which sends the mails
     mailAccount: ''
@@ -386,6 +412,13 @@ Email:
     generateImage: false
     # The OAuth2 token
     emailOauth2Token: ''
+    # Verify the SSL/TLS server certificate hostname?
+    # Only applies when an SSL/TLS connection is active (port 465, port 587,
+    # port 25 with useTls=true, or any other port).
+    # Set to false only if your SMTP server uses a self-signed certificate.
+    # Note: if you previously used port 465, this check was not enforced;
+    # set to false to restore the old behavior with a self-signed certificate.
+    sslCheckServerIdentity: true
 Hooks:
     # Do we need to hook with multiverse for spawn checking?
     multiverse: true
@@ -549,6 +582,9 @@ limbo:
     # Restore walk speed: RESTORE, DEFAULT, MAX_RESTORE, RESTORE_NO_ZERO.
     # See above for a description of the values.
     restoreWalkSpeed: RESTORE_NO_ZERO
+    # If true, AuthMe recreates tracked ender pearls after login when the original entity
+    # cannot be found anymore. Disable this if you only want to restore still-existing pearls.
+    recreateEnderPearls: true
 BackupSystem:
     # General configuration for backups: if false, no backups are possible
     ActivateBackup: false
@@ -558,30 +594,6 @@ BackupSystem:
     OnServerStop: true
     # Windows only: MySQL installation path
     MysqlWindowsPath: C:\Program Files\MySQL\MySQL Server 5.1\
-# Converter settings: see https://github.com/AuthMe/AuthMeReloaded/wiki/Converters
-Converter:
-    Rakamak:
-        # Rakamak file name
-        fileName: users.rak
-        # Rakamak use IP?
-        useIP: false
-        # Rakamak IP file name
-        ipFileName: UsersIp.rak
-    CrazyLogin:
-        # CrazyLogin database file name
-        fileName: accounts.db
-    loginSecurity:
-        # LoginSecurity: convert from SQLite; if false we use MySQL
-        useSqlite: true
-        mySql:
-            # LoginSecurity MySQL: database host
-            host: ''
-            # LoginSecurity MySQL: database name
-            database: ''
-            # LoginSecurity MySQL: database user
-            user: ''
-            # LoginSecurity MySQL: password for database user
-            password: ''
 
 ```
 
@@ -590,4 +602,4 @@ To change settings on a running server, save your changes to config.yml and use
 
 ---
 
-This page was automatically generated on the [AuthMe/AuthMeReloaded repository](https://github.com/AuthMe/AuthMeReloaded/tree/master/docs/) on Thu Jul 28 18:11:22 CEST 2022
+This page was automatically generated on the [AuthMe/AuthMeReloaded repository](https://github.com/AuthMe/AuthMeReloaded/tree/master/docs/) on Wed Apr 22 23:25:58 CEST 2026

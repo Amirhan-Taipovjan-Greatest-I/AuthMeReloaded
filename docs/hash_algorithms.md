@@ -1,5 +1,5 @@
 <!-- AUTO-GENERATED FILE! Do not edit this directly -->
-<!-- File auto-generated on Sun Apr 04 21:31:44 CEST 2021. See docs/hashmethods/hash_algorithms.tpl.md -->
+<!-- File auto-generated on Wed Apr 22 23:26:00 CEST 2026. See authme-tools/src/test/java/tools/docs/hashmethods/hash_algorithms.tpl.md -->
 
 ## Hash Algorithms
 AuthMe supports the following hash algorithms for storing your passwords safely.
@@ -18,6 +18,7 @@ JOOMLA | Acceptable | 65 |  | | Text | 32 |
 MD5VB | Acceptable | 56 |  | | Text | 16 | 
 MYBB | Acceptable | 32 |  | | Text | 8 | Y
 PBKDF2 | Recommended | 165 |  | | Text | 16 | 
+PBKDF2BASE64 | Recommended | 82 |  | | Text | 16 | 
 PBKDF2DJANGO | Acceptable | 77 | Y | | Text | 12 | 
 PHPBB | Acceptable | 60 |  | | Text | 22 | 
 PHPFUSION | Do not use | 64 | Y | |  |  | Y
@@ -79,4 +80,4 @@ or bad.
 
 ---
 
-This page was automatically generated on the [AuthMe/AuthMeReloaded repository](https://github.com/AuthMe/AuthMeReloaded/tree/master/docs/) on Sun Apr 04 21:31:44 CEST 2021
+This page was automatically generated on the [AuthMe/AuthMeReloaded repository](https://github.com/AuthMe/AuthMeReloaded/tree/master/docs/) on Wed Apr 22 23:26:00 CEST 2026

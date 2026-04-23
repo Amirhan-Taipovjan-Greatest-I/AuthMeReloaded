@@ -6,7 +6,7 @@
 | Type              | Badges                                                                                                                                                                                                                                                                                                                                                                                |
 |-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Code quality:** | [![Code Climate](https://codeclimate.com/github/AuthMe/AuthMeReloaded/badges/gpa.svg)](https://codeclimate.com/github/AuthMe/AuthMeReloaded) [![Coverage status](https://coveralls.io/repos/AuthMe-Team/AuthMeReloaded/badge.svg?branch=master&service=github)](https://coveralls.io/github/AuthMe-Team/AuthMeReloaded?branch=master)                                                 |
-| **Jenkins CI:**   | [![Jenkins Status](https://img.shields.io/website-up-down-green-red/http/shields.io.svg?label=ci.codemc.org)](https://ci.codemc.org/) [![Build Status](https://ci.codemc.org/buildStatus/icon?job=AuthMe/AuthMeReloaded)](https://ci.codemc.org/job/AuthMe/job/AuthMeReloaded) ![Build Tests](https://img.shields.io/jenkins/t/https/ci.codemc.org/job/AuthMe/job/AuthMeReloaded.svg) |
+| **Jenkins CI:**   | [![Jenkins Status](https://img.shields.io/website-up-down-green-red/http/shields.io.svg?label=ci.codemc.org)](https://ci.codemc.org/) [![Build Status](https://ci.codemc.org/buildStatus/icon?job=AuthMe/AuthMeReloaded)](https://ci.codemc.org/job/AuthMe/job/AuthMeReloaded) ![Jenkins Tests](https://img.shields.io/jenkins/tests?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FAuthMe%2Fjob%2FAuthMeReloaded) |
 | **Other CIs:**    | [![Build Status](https://www.travis-ci.com/AuthMe/AuthMeReloaded.svg?branch=master)](https://www.travis-ci.com/AuthMe/AuthMeReloaded)                                                                                                                                                                                                                                                             |
 
 ## Description
@@ -60,7 +60,7 @@ You can also create your own translation file and, if you want, you can share it
   <li>Automatic database backup</li>
   <li>Available languages: <a href="https://github.com/AuthMe/AuthMeReloaded/blob/master/docs/translations.md">translations</a></li>
   <li>Built-in deprecated FlatFile (auths.db) to SQL (authme.sql) converter!</li>
-  <li><strong>Import your old database from other plugins like Rakamak, CrazyLogin, RoyalAuth and vAuth!</strong></li>
+  <li><strong>Import Auth+ accounts or migrate between SQLite and MySQL without losing AuthMe data.</strong></li>
 </ul>
 
 #### Configuration
@@ -73,11 +73,9 @@ You can also create your own translation file and, if you want, you can share it
 - [List of all permission nodes](http://github.com/AuthMe/AuthMeReloaded/blob/master/docs/permission_nodes.md)
 
 #### How To
-- [How to use the converter](https://github.com/AuthMe/AuthMeReloaded/wiki/Converters)
-
+- [How to use the Auth+ converter](docs/converters.md)
 - [Website integration](https://github.com/AuthMe/AuthMeReloaded/tree/master/samples/website_integration)
-- [How to convert from Rakamak](https://dev.bukkit.org/projects/authme-reloaded/pages/how-to-import-database-from-rakamak)
-- Convert between database types (e.g. SQLite to MySQL): /authme converter
+- Convert between database types (e.g. SQLite to MySQL): `/authme converter sqliteToSql`
 
 
 ## Links and Contacts
@@ -102,30 +100,38 @@ You can also create your own translation file and, if you want, you can share it
     <dependencies>
         <dependency>
             <groupId>fr.xephi</groupId>
-            <artifactId>authme</artifactId>
-            <version>5.6.1-SNAPSHOT</version>
+            <artifactId>authme-core</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
   ```
 
 - **Statistics:**
-    ![Graph](https://bstats.org/signatures/bukkit/AuthMe.svg)
+    [![Graph](https://bstats.org/signatures/bukkit/AuthMe.svg)](https://bstats.org/plugin/bukkit/AuthMe/164)
 
 ## Requirements
 
 ##### Compiling requirements:
->- JDK 17+
+>- JDK 17+ for `authme-core` and `authme-spigot-legacy`
+>- JDK 21+ for the full multi-module build (`authme-spigot-1.21`, `authme-paper-common`, `authme-paper`, `authme-folia`)
 >- Maven (3.8.8+)
 >- Git/GitHub (Optional)
 
 ##### How to compile the project:
 >- Clone the project with Git/GitHub
->- Execute command "mvn clean package"
+>- Execute command `mvn clean package`
+>- With JDK 17, Maven builds only the Java 17-compatible modules
+>- With JDK 21+, Maven builds the full reactor
+>- Build and tooling command reference: [docs/build.md](docs/build.md)
 
 ##### Running requirements:
->- Java 17+
->- Paper or Spigot (1.16.5 and up)
+>- Use the jar matching your server platform/version
+>- Java 17+ for `AuthMe-*-Spigot-Legacy.jar` (Spigot 1.16.x – 1.19.x)
+>- Java 21+ for:
+>  - `AuthMe-*-Spigot-1.21.jar` (Spigot 1.20.x – 1.21.x)
+>  - `AuthMe-*-Paper.jar` (Paper 1.21+)
+>  - `AuthMe-*-Folia.jar` (Folia 1.21+)
 >- ProtocolLib (optional, required by some features)
 
 ## Credits
